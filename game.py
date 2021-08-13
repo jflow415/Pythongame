@@ -52,14 +52,12 @@ class Game:
             #game logic
             self.move_characters(player_direction)
 
-            #find collision of characters and breakout
-            if self.detect_collision(self.player, self.enemy):
-                return
-            elif self.detect_collision(self.player, self.treasure):
-                return
-
             #display function
             self.image_sprites()
+
+            #check collision
+            if self.check_collision():
+                return
 
 
             #perform the loop 60 times per second "60 fps"
@@ -74,11 +72,21 @@ class Game:
             self.arcade_window.blit(enemy.image,(enemy.x, enemy.y))
 
         pygame.display.update()
+
     #all character movements on the screen
     def move_characters(self, player_direction):
         self.player.move(player_direction, self.height)  
         for enemy in self.enemies: 
             enemy.move(self.width) 
+
+    #find collision of characters/treasure and breakout
+    def check_collision(self):
+        for enemy in self.enemies:
+            if self.detect_collision(self.player, enemy):
+                return True
+        if self.detect_collision(self.player, self.treasure):
+                return True
+        return False
 
     #check for overlappying
     def detect_collision(self, object_one, object_two):
@@ -92,6 +100,8 @@ class Game:
         elif (object_one.x + object_one.width) < object_two.x:
             return False
         return True
+    
+    
 
     
 
