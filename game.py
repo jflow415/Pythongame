@@ -20,7 +20,12 @@ class Game:
         self.treasure = GameObject(280,20, 35,25, 'assets/coin2.png')
 
         self.player = Player(280, 500, 50, 50, 'assets/player.png', 10)
-        
+        self.enemies = [
+            Enemy(20, 520, 25, 25, 'assets/imp.png', 3),
+            Enemy(200, 400, 50, 50, 'assets/imp.png', 3),
+            Enemy(550, 200, 50, 50, 'assets/imp.png', 3)
+
+        ]
         self.enemy = Enemy(50, 400, 50, 50, 'assets/imp.png', 3)
 
   
@@ -45,8 +50,13 @@ class Game:
                         player_direction = 0
 
             #game logic
-            self.player.move(player_direction, self.height)   
-            self.enemy.move(self.width) 
+            self.move_characters(player_direction)
+
+            #find collision of characters and breakout
+            if self.detect_collision(self.player, self.enemy):
+                return
+            elif self.detect_collision(self.player, self.treasure):
+                return
 
             #display function
             self.image_sprites()
@@ -60,8 +70,29 @@ class Game:
         self.arcade_window.blit(self.background.image, (self.background.x, self.background.y))
         self.arcade_window.blit(self.treasure.image,(self.treasure.x, self.treasure.y))
         self.arcade_window.blit(self.player.image,(self.player.x, self.player.y))
-        self.arcade_window.blit(self.enemy.image,(self.enemy.x, self.enemy.y))
+        for enemy in self.enemies:
+            self.arcade_window.blit(enemy.image,(enemy.x, enemy.y))
 
         pygame.display.update()
+    #all character movements on the screen
+    def move_characters(self, player_direction):
+        self.player.move(player_direction, self.height)  
+        for enemy in self.enemies: 
+            enemy.move(self.width) 
+
+    #check for overlappying
+    def detect_collision(self, object_one, object_two):
+        if object_one.y > (object_two.y + object_two.height):
+            return False
+        elif (object_one.y + object_one.height) < object_two.y:
+            return False
+
+        if object_one.x > (object_two.x + object_two.width):
+            return False
+        elif (object_one.x + object_one.width) < object_two.x:
+            return False
+        return True
+
+    
 
 
